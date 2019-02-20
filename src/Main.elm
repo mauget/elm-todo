@@ -79,7 +79,7 @@ rightTrimmedCopy model =
     String.concat listb
 
 
-appendNewLines : (List a) -> (List a)
+appendNewLines : (List String) -> (List String)
 appendNewLines list =
     if List.isEmpty list then list else List.take ((List.length list) - 1) list
     |> List.filter (\v -> (String.length v) > 0)

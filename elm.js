@@ -4651,6 +4651,23 @@ var elm$core$Maybe$Just = function (a) {
 	return {$: 'Just', a: a};
 };
 var elm$core$Maybe$Nothing = {$: 'Nothing'};
+var elm$core$String$length = _String_length;
+var author$project$Main$appendNewLines = function (list) {
+	return elm$core$List$isEmpty(list) ? list : A2(
+		elm$core$List$map,
+		function (v) {
+			return v + '\n';
+		},
+		A2(
+			elm$core$List$filter,
+			function (v) {
+				return elm$core$String$length(v) > 0;
+			},
+			A2(
+				elm$core$List$take,
+				elm$core$List$length(list) - 1,
+				list)));
+};
 var elm$core$String$join = F2(
 	function (sep, chunks) {
 		return A2(
@@ -4661,26 +4678,11 @@ var elm$core$String$join = F2(
 var elm$core$String$concat = function (strings) {
 	return A2(elm$core$String$join, '', strings);
 };
-var elm$core$String$length = _String_length;
 var elm$core$String$lines = _String_lines;
 var author$project$Main$rightTrimmedCopy = function (model) {
-	var lista = elm$core$String$lines(model.content);
-	var listb = elm$core$List$isEmpty(lista) ? lista : A2(
-		elm$core$List$take,
-		elm$core$List$length(lista) - 1,
-		lista);
-	var listc = A2(
-		elm$core$List$map,
-		function (v) {
-			return v + '\n';
-		},
-		A2(
-			elm$core$List$filter,
-			function (v) {
-				return elm$core$String$length(v) > 0;
-			},
-			listb));
-	return elm$core$String$concat(listc);
+	var listb = author$project$Main$appendNewLines(
+		elm$core$String$lines(model.content));
+	return elm$core$String$concat(listb);
 };
 var elm$core$Basics$eq = _Utils_equal;
 var author$project$Main$updatedCopy = function (m) {

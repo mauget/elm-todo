@@ -4680,9 +4680,9 @@ var elm$core$String$concat = function (strings) {
 };
 var elm$core$String$lines = _String_lines;
 var author$project$Main$rightTrimmedCopy = function (model) {
-	var listb = author$project$Main$appendNewLines(
-		elm$core$String$lines(model.content));
-	return elm$core$String$concat(listb);
+	return elm$core$String$concat(
+		author$project$Main$appendNewLines(
+			elm$core$String$lines(model.content)));
 };
 var elm$core$Basics$eq = _Utils_equal;
 var author$project$Main$updatedCopy = function (m) {

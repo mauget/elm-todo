@@ -72,11 +72,9 @@ updatedCopy m =
 
 rightTrimmedCopy : Model -> Contents
 rightTrimmedCopy model =
-    let
-        lista = String.lines model.content
-        listb = appendNewLines lista
-    in
-    String.concat listb
+    String.lines model.content
+    |> appendNewLines
+    |> String.concat
 
 
 appendNewLines : (List String) -> (List String)

@@ -67,7 +67,7 @@ updatedCopy : Model -> Contents
 updatedCopy m =
     if m.newItem == ""
         then m.content
-        else m.content ++ "\n" ++ m.newItem
+        else m.content ++ m.newItem ++ "\n"
 
 
 rightTrimmedCopy : Model -> Contents

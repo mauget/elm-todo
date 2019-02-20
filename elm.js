@@ -4686,7 +4686,7 @@ var author$project$Main$rightTrimmedCopy = function (model) {
 };
 var elm$core$Basics$eq = _Utils_equal;
 var author$project$Main$updatedCopy = function (m) {
-	return (m.newItem === '') ? m.content : (m.content + ('\n' + m.newItem));
+	return (m.newItem === '') ? m.content : (m.content + (m.newItem + '\n'));
 };
 var author$project$Main$update = F2(
 	function (msg, model) {

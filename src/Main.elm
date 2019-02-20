@@ -82,6 +82,9 @@ updateCopy model =
     List.append model.content [model.newItem]
 
 
+---- VIEW
+
+
 renderLine : Item -> (Html msg)
 renderLine item =
     li [] [text item]

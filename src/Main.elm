@@ -21,15 +21,17 @@ main =
 
 type alias Item = String
 
+type alias Contents = String
+
 type alias Model =
-  { content : String
-  , newItem : String
+  { content : Contents
+  , newItem : Item
   }
 
 
 init : Model
 init =
-    { content = "<todo list>"
+    { content = ""
     , newItem = ""
     }
 
@@ -39,6 +41,7 @@ init =
 type Msg
     = Add
     | Reset
+    | RemovePrev
     | SetNew String
 
 
@@ -48,26 +51,39 @@ update msg model =
     case msg of
 
         Add ->
-            let
-                m = model
-                todos = if m.newItem == ""
-                    then m.content
-                    else m.content ++ "\n" ++ m.newItem
-            in
-            {model | content = todos, newItem = ""}
+            {model | content = updatedCopy model, newItem = ""}
 
         SetNew arg ->
             {model | newItem = arg}
 
+        RemovePrev ->
+            {model | content = rightTrimmedCopy model, newItem = ""}
+
         Reset ->
             init
 
---updatedTodos m =
---    if m.newItem == ""
---        then m.content
---        else m.content ++ "\n" ++ m.newItem
+
+updatedCopy : Model -> Contents
+updatedCopy m =
+    if m.newItem == ""
+        then m.content
+        else m.content ++ "\n" ++ m.newItem
 
 
+rightTrimmedCopy : Model -> Contents
+rightTrimmedCopy model =
+    let
+        lista = String.lines model.content
+        listb = appendNewLines lista
+    in
+    String.concat listb
+
+
+appendNewLines : (List a) -> (List a)
+appendNewLines list =
+    if List.isEmpty list then list else List.take ((List.length list) - 1) list
+    |> List.filter (\v -> (String.length v) > 0)
+    |> List.map (\v -> v ++ "\n" )
 
 -- VIEW
 
@@ -80,5 +96,6 @@ view model =
     , input [value model.newItem, onInput SetNew,  placeholder "Item"] []
     , br [] []
     , button [onClick Add] [text "Add"]
+    , button [onClick RemovePrev] [text "Remove Prev"]
     , button [onClick Reset] [text "Reset"]
     ]

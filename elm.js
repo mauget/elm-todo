@@ -4557,7 +4557,7 @@ var elm$core$List$take = F2(
 	function (n, list) {
 		return A3(elm$core$List$takeFast, 0, n, list);
 	});
-var author$project$Main$removeLast = function (model) {
+var author$project$Main$removeLatest = function (model) {
 	return author$project$Main$hasNoContent(model) ? model.content : A2(
 		elm$core$List$take,
 		elm$core$List$length(model.content) - 1,
@@ -4648,11 +4648,11 @@ var author$project$Main$update = F2(
 				return _Utils_update(
 					model,
 					{newItem: item});
-			case 'RemoveLast':
+			case 'RemoveLatest':
 				return _Utils_update(
 					model,
 					{
-						content: author$project$Main$removeLast(model),
+						content: author$project$Main$removeLatest(model),
 						newItem: ''
 					});
 			default:
@@ -4663,7 +4663,7 @@ var author$project$Main$Add = {$: 'Add'};
 var author$project$Main$CueNew = function (a) {
 	return {$: 'CueNew', a: a};
 };
-var author$project$Main$RemoveLast = {$: 'RemoveLast'};
+var author$project$Main$RemoveLatest = {$: 'RemoveLatest'};
 var author$project$Main$Reset = {$: 'Reset'};
 var elm$core$Basics$identity = function (x) {
 	return x;
@@ -5170,7 +5170,7 @@ var author$project$Main$view = function (model) {
 				elm$html$Html$button,
 				_List_fromArray(
 					[
-						elm$html$Html$Events$onClick(author$project$Main$RemoveLast)
+						elm$html$Html$Events$onClick(author$project$Main$RemoveLatest)
 					]),
 				_List_fromArray(
 					[

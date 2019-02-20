@@ -2,8 +2,8 @@
 module Main exposing (main)
 
 import Browser
-import Html exposing (Html, Attribute, div, input, text, br, textarea, button)
-import Html.Attributes exposing (rows, cols, disabled, value, placeholder)
+import Html exposing (Html, Attribute, div, input, text, br, ol, li, button)
+import Html.Attributes exposing (value, placeholder)
 import Html.Events exposing (onInput, onClick)
 
 
@@ -21,17 +21,17 @@ main =
 
 type alias Item = String
 
-type alias Contents = String
+type alias Content = List String
 
 type alias Model =
-  { content : Contents
+  { content : Content
   , newItem : Item
   }
 
 
 init : Model
 init =
-    { content = ""
+    { content = []
     , newItem = ""
     }
 
@@ -40,9 +40,9 @@ init =
 
 type Msg
     = Add
+    | CueNew Item
     | Reset
-    | RemovePrev
-    | SetNew String
+    | RemoveLatest
 
 
 update : Msg -> Model -> Model
@@ -51,49 +51,56 @@ update msg model =
     case msg of
 
         Add ->
-            {model | content = updatedCopy model, newItem = ""}
+            {model | content = updateCopy model, newItem = ""}
 
-        SetNew arg ->
-            {model | newItem = arg}
+        CueNew item ->
+            {model | newItem = item}
 
-        RemovePrev ->
-            {model | content = rightTrimmedCopy model, newItem = ""}
+        RemoveLatest ->
+            {model | content = removeLatest model, newItem = ""}
 
         Reset ->
             init
 
 
-updatedCopy : Model -> Contents
-updatedCopy m =
-    if m.newItem == ""
-        then m.content
-        else m.content ++ m.newItem ++ "\n"
+hasNoContent : Model -> Bool
+hasNoContent model =
+    List.length model.content == 0
 
 
-rightTrimmedCopy : Model -> Contents
-rightTrimmedCopy model =
-    String.lines model.content
-    |> appendNewLines
-    |> String.concat
+removeLatest : Model -> Content
+removeLatest model =
+    if hasNoContent model
+        then
+            model.content
+        else
+            List.take (List.length model.content - 1) model.content
 
 
-appendNewLines : (List String) -> (List String)
-appendNewLines list =
-    if List.isEmpty list then list else List.take ((List.length list) - 1) list
-    |> List.filter (\v -> (String.length v) > 0)
-    |> List.map (\v -> v ++ "\n" )
+updateCopy : Model -> Content
+updateCopy model =
+    List.append model.content [model.newItem]
 
--- VIEW
+
+renderLine : Item -> (Html msg)
+renderLine item =
+    li [] [text item]
+
+
+renderContent : Content -> List (Html msg)
+renderContent list =
+    List.map renderLine list
+
 
 view: Model -> Html Msg
 view model =
-
   div []
-    [ textarea [rows 10, cols 40, disabled True ] [text model.content]
+    [ ol [] (renderContent model.content)
     , br [] []
-    , input [value model.newItem, onInput SetNew,  placeholder "Item"] []
+    , input [value model.newItem, onInput CueNew, placeholder "Item"] []
     , br [] []
     , button [onClick Add] [text "Add"]
-    , button [onClick RemovePrev] [text "Remove Prev"]
+    , button [onClick RemoveLatest] [text "Remove Current"]
     , button [onClick Reset] [text "Reset"]
     ]
+

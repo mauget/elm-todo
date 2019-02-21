@@ -4390,7 +4390,7 @@ var elm$core$Set$toList = function (_n0) {
 	var dict = _n0.a;
 	return elm$core$Dict$keys(dict);
 };
-var author$project$Main$init = {content: _List_Nil, newItem: ''};
+var author$project$Main$init = {content: _List_Nil, cued: ''};
 var elm$core$Basics$eq = _Utils_equal;
 var elm$core$Basics$add = _Basics_add;
 var elm$core$List$foldl = F3(
@@ -4631,39 +4631,39 @@ var author$project$Main$updateCopy = function (model) {
 		elm$core$List$append,
 		model.content,
 		_List_fromArray(
-			[model.newItem]));
+			[model.cued]));
 };
 var author$project$Main$update = F2(
 	function (msg, model) {
 		switch (msg.$) {
-			case 'Add':
+			case 'AddCued':
 				return _Utils_update(
 					model,
 					{
 						content: author$project$Main$updateCopy(model),
-						newItem: ''
+						cued: ''
 					});
-			case 'CueNew':
+			case 'Cue':
 				var item = msg.a;
 				return _Utils_update(
 					model,
-					{newItem: item});
-			case 'RemoveLatest':
+					{cued: item});
+			case 'RemoveNewest':
 				return _Utils_update(
 					model,
 					{
 						content: author$project$Main$removeLatest(model),
-						newItem: ''
+						cued: ''
 					});
 			default:
 				return author$project$Main$init;
 		}
 	});
-var author$project$Main$Add = {$: 'Add'};
-var author$project$Main$CueNew = function (a) {
-	return {$: 'CueNew', a: a};
+var author$project$Main$AddCued = {$: 'AddCued'};
+var author$project$Main$Cue = function (a) {
+	return {$: 'Cue', a: a};
 };
-var author$project$Main$RemoveLatest = {$: 'RemoveLatest'};
+var author$project$Main$RemoveNewest = {$: 'RemoveNewest'};
 var author$project$Main$Reset = {$: 'Reset'};
 var elm$core$Basics$identity = function (x) {
 	return x;
@@ -5150,8 +5150,8 @@ var author$project$Main$view = function (model) {
 				elm$html$Html$input,
 				_List_fromArray(
 					[
-						elm$html$Html$Attributes$value(model.newItem),
-						elm$html$Html$Events$onInput(author$project$Main$CueNew),
+						elm$html$Html$Attributes$value(model.cued),
+						elm$html$Html$Events$onInput(author$project$Main$Cue),
 						elm$html$Html$Attributes$placeholder('Item')
 					]),
 				_List_Nil),
@@ -5160,7 +5160,7 @@ var author$project$Main$view = function (model) {
 				elm$html$Html$button,
 				_List_fromArray(
 					[
-						elm$html$Html$Events$onClick(author$project$Main$Add)
+						elm$html$Html$Events$onClick(author$project$Main$AddCued)
 					]),
 				_List_fromArray(
 					[
@@ -5170,11 +5170,11 @@ var author$project$Main$view = function (model) {
 				elm$html$Html$button,
 				_List_fromArray(
 					[
-						elm$html$Html$Events$onClick(author$project$Main$RemoveLatest)
+						elm$html$Html$Events$onClick(author$project$Main$RemoveNewest)
 					]),
 				_List_fromArray(
 					[
-						elm$html$Html$text('Remove Current')
+						elm$html$Html$text('Remove Newest')
 					])),
 				A2(
 				elm$html$Html$button,

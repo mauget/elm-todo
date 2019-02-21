@@ -47,24 +47,24 @@ type alias Content = List String
 
 type alias Model =
   { content : Content
-  , newItem : Item
+  , cued : Item
   }
 
 
 init : Model
 init =
     { content = []
-    , newItem = ""
+    , cued = ""
     }
 
 
 ---- UPDATE
 
 type Msg
-    = Add
-    | CueNew Item
+    = AddCued
+    | Cue Item
     | Reset
-    | RemoveLatest
+    | RemoveNewest
 
 
 update : Msg -> Model -> Model
@@ -72,14 +72,14 @@ update msg model =
 
     case msg of
 
-        Add ->
-            {model | content = updateCopy model, newItem = ""}
+        AddCued ->
+            {model | content = updateCopy model, cued = ""}
 
-        CueNew item ->
-            {model | newItem = item}
+        Cue item ->
+            {model | cued = item}
 
-        RemoveLatest ->
-            {model | content = removeLatest model, newItem = ""}
+        RemoveNewest ->
+            {model | content = removeLatest model, cued = ""}
 
         Reset ->
             init
@@ -101,7 +101,7 @@ removeLatest model =
 
 updateCopy : Model -> Content
 updateCopy model =
-    List.append model.content [model.newItem]
+    List.append model.content [model.cued]
 
 
 ---- VIEW
@@ -122,10 +122,10 @@ view model =
   div []
     [ ol [] (renderContent model.content)
     , br [] []
-    , input [value model.newItem, onInput CueNew, placeholder "Item"] []
+    , input [value model.cued, onInput Cue, placeholder "Item"] []
     , br [] []
-    , button [onClick Add] [text "Add"]
-    , button [onClick RemoveLatest] [text "Remove Current"]
+    , button [onClick AddCued] [text "Add"]
+    , button [onClick RemoveNewest] [text "Remove Newest"]
     , button [onClick Reset] [text "Reset"]
     ]
 

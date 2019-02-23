@@ -20,12 +20,11 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 -}
 
-
 module Main exposing (main)
 
 import Browser
-import Html exposing (Html, Attribute, div, input, text, br, ol, li, button)
-import Html.Attributes exposing (value, placeholder)
+import Html exposing (Html, Attribute, div, input, text, ol, li, button, h1)
+import Html.Attributes exposing (value, placeholder, class, size)
 import Html.Events exposing (onInput, onClick)
 
 
@@ -96,12 +95,13 @@ removeLatest model =
         then
             model.content
         else
-            List.take (List.length model.content - 1) model.content
+            List.drop 1 model.content
 
 
 updateCopy : Model -> Content
 updateCopy model =
-    List.append model.content [model.cued]
+--    List.append model.content [model.cued]
+    (::) model.cued model.content
 
 
 ---- VIEW
@@ -109,7 +109,7 @@ updateCopy model =
 
 renderLine : Item -> (Html msg)
 renderLine item =
-    li [] [text item]
+    li [class "list-group-item  list-group-item-dark"] [text item]
 
 
 renderContent : Content -> List (Html msg)
@@ -119,13 +119,40 @@ renderContent list =
 
 view: Model -> Html Msg
 view model =
-  div []
-    [ ol [] (renderContent model.content)
-    , br [] []
-    , input [value model.cued, onInput Cue, placeholder "Item"] []
-    , br [] []
-    , button [onClick AddCued] [text "Add"]
-    , button [onClick RemoveNewest] [text "Remove Newest"]
-    , button [onClick Reset] [text "Reset"]
+  div [class "container container-2"] [
+
+    div [class "group-box"] [
+
+        div [class "row"] [
+            div [class "col-md-12"] [
+                h1 [ ] [text "To-Do List"]
+            ]
+        ]
+
+        ,div [class "row"] [
+            div [class "col-md-12"] [
+                div [class "btn-group"] [
+                    button [onClick AddCued, class "btn btn-primary"] [text "Add"]
+                    , button [onClick RemoveNewest, class "btn btn-secondary"] [text "Undo"]
+                    , button [onClick Reset,  class "btn btn-danger"] [text "Reset"]
+                ]
+            ]
+        ]
+
+        ,div [class "row"] [
+            div [class "col-md-12"] [
+                input [class "new-todo", size 40, value model.cued, onInput Cue, placeholder "Todo Item"] []
+            ]
+        ]
+
+        ,div [class "row"] [
+            div [class "col-md-12"] [
+                ol [] (renderContent model.content)
+            ]
+        ]
     ]
+
+  ]
+
+
 

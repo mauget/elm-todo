@@ -12,7 +12,7 @@ The screen channels Web-1999, squeezed into the upper left corner.
 ![Raw todo image](doc/raw-todos.png)
 
 A screenshot of the the app after re-arranging the controls and adding 
-layout and style follows.
+layout and style:
 
 ![Styled todo image](doc/Elm-todo-styled.png)
 

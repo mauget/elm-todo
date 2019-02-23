@@ -100,7 +100,6 @@ removeLatest model =
 
 updateCopy : Model -> Content
 updateCopy model =
---    List.append model.content [model.cued]
     (::) model.cued model.content
 
 

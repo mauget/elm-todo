@@ -108,7 +108,7 @@ updateCopy model =
 
 renderLine : Item -> (Html msg)
 renderLine item =
-    li [class "list-group-item  list-group-item-dark"] [text item]
+    li [] [text item]
 
 
 renderContent : Content -> List (Html msg)

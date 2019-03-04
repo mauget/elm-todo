@@ -23,47 +23,49 @@ SOFTWARE.
 module Main exposing (main)
 
 import Browser
-import Html exposing (Html, Attribute, div, input, text, ol, li, button, h1)
-import Html.Attributes exposing (value, placeholder, class, size)
-import Html.Events exposing (onInput, onClick)
-
+import Html exposing (Html, Attribute, div, input, text, button, h1, select, option, p)
+import Html.Attributes exposing (id, value, placeholder, class, size, selected, autofocus)
+import Html.Events exposing (onClick, onInput)
 
 -- MAIN
 
 main =
-  Browser.sandbox
-    { init = init
-    , update = update
-    , view = view
-    }
+  Browser.sandbox { init = init , update = update , view = view }
 
 
 -- MODEL
 
-type alias Item = String
+type alias Content = List Todo
 
-type alias Content = List String
+type alias Seq = Int
+
+type alias TodoText = String
+
+type alias Todo = {value: Seq, txt: TodoText}
 
 type alias Model =
   { content : Content
-  , cued : Item
+  , staged : TodoText
+  , seq : Seq
   }
 
 
 init : Model
 init =
     { content = []
-    , cued = ""
+    , staged = ""
+    , seq = 1000
     }
 
 
 ---- UPDATE
 
 type Msg
-    = AddCued
-    | Cue Item
+    = AddStaged
+    | StageInput TodoText
     | Reset
     | RemoveNewest
+--    | RemoveSelected
 
 
 update : Msg -> Model -> Model
@@ -71,14 +73,22 @@ update msg model =
 
     case msg of
 
-        AddCued ->
-            {model | content = updateCopy model, cued = ""}
+        AddStaged ->
+            let
+                newSeq = (+) 1 model.seq
+                newToDo = {value = newSeq, txt = model.staged}
+                newContent = (::) newToDo model.content
+            in
+            {model |  seq = newSeq, content = newContent, staged = ""}
 
-        Cue item ->
-            {model | cued = item}
+        StageInput todoTxt ->
+            {model | staged = todoTxt}
 
         RemoveNewest ->
-            {model | content = removeLatest model, cued = ""}
+            {model | content = removeLatest model}
+
+--        RemoveSelected ->
+--            {model | content = removeSelected model, cued = emptyTodo}
 
         Reset ->
             init
@@ -86,7 +96,7 @@ update msg model =
 
 hasNoContent : Model -> Bool
 hasNoContent model =
-    List.length model.content == 0
+    List.isEmpty model.content
 
 
 removeLatest : Model -> Content
@@ -98,17 +108,16 @@ removeLatest model =
             List.drop 1 model.content
 
 
-updateCopy : Model -> Content
-updateCopy model =
-    (::) model.cued model.content
-
-
 ---- VIEW
 
-
-renderLine : Item -> (Html msg)
-renderLine item =
-    li [] [text item]
+renderLine : Todo -> (Html msg)
+renderLine todo =
+    let
+        todoValue = String.fromInt todo.value
+        idVal = "td" ++ todoValue
+        todoPrefix = "#" ++ todoValue ++ " " ++ todo.txt
+    in
+    option [id idVal, value idVal] [text todoPrefix]
 
 
 renderContent : Content -> List (Html msg)
@@ -131,7 +140,7 @@ view model =
         ,div [class "row"] [
             div [class "col-md-12"] [
                 div [class "btn-group"] [
-                    button [onClick AddCued, class "btn btn-primary"] [text "Add"]
+                    button [onClick AddStaged, class "btn btn-primary"] [text "Add"]
                     , button [onClick RemoveNewest, class "btn btn-secondary"] [text "Undo"]
                     , button [onClick Reset,  class "btn btn-danger"] [text "Reset"]
                 ]
@@ -140,18 +149,24 @@ view model =
 
         ,div [class "row"] [
             div [class "col-md-12"] [
-                input [class "new-todo", size 40, value model.cued, onInput Cue, placeholder "Todo Item"] []
+                input [class "new-todo", size 40, value model.staged, onInput StageInput,
+                    placeholder "New todo item", autofocus True] []
             ]
         ]
 
         ,div [class "row"] [
             div [class "col-md-12"] [
-                ol [] (renderContent model.content)
+                select [size 10] (renderContent model.content)
+            ]
+        ]
+
+        ,div [class "row"] [
+            div [class "col-md-12"] [
+                p [] [text ("current seq # = " ++  (String.fromInt model.seq))  ]
             ]
         ]
     ]
 
   ]
-
 
 

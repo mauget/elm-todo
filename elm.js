@@ -853,53 +853,6 @@ var _Basics_xor = F2(function(a, b) { return a !== b; });
 
 
 
-function _Char_toCode(char)
-{
-	var code = char.charCodeAt(0);
-	if (0xD800 <= code && code <= 0xDBFF)
-	{
-		return (code - 0xD800) * 0x400 + char.charCodeAt(1) - 0xDC00 + 0x10000
-	}
-	return code;
-}
-
-function _Char_fromCode(code)
-{
-	return _Utils_chr(
-		(code < 0 || 0x10FFFF < code)
-			? '\uFFFD'
-			:
-		(code <= 0xFFFF)
-			? String.fromCharCode(code)
-			:
-		(code -= 0x10000,
-			String.fromCharCode(Math.floor(code / 0x400) + 0xD800, code % 0x400 + 0xDC00)
-		)
-	);
-}
-
-function _Char_toUpper(char)
-{
-	return _Utils_chr(char.toUpperCase());
-}
-
-function _Char_toLower(char)
-{
-	return _Utils_chr(char.toLowerCase());
-}
-
-function _Char_toLocaleUpper(char)
-{
-	return _Utils_chr(char.toLocaleUpperCase());
-}
-
-function _Char_toLocaleLower(char)
-{
-	return _Utils_chr(char.toLocaleLowerCase());
-}
-
-
-
 var _String_cons = F2(function(chr, str)
 {
 	return chr + str;
@@ -1209,6 +1162,53 @@ function _String_fromList(chars)
 	return _List_toArray(chars).join('');
 }
 
+
+
+
+function _Char_toCode(char)
+{
+	var code = char.charCodeAt(0);
+	if (0xD800 <= code && code <= 0xDBFF)
+	{
+		return (code - 0xD800) * 0x400 + char.charCodeAt(1) - 0xDC00 + 0x10000
+	}
+	return code;
+}
+
+function _Char_fromCode(code)
+{
+	return _Utils_chr(
+		(code < 0 || 0x10FFFF < code)
+			? '\uFFFD'
+			:
+		(code <= 0xFFFF)
+			? String.fromCharCode(code)
+			:
+		(code -= 0x10000,
+			String.fromCharCode(Math.floor(code / 0x400) + 0xD800, code % 0x400 + 0xDC00)
+		)
+	);
+}
+
+function _Char_toUpper(char)
+{
+	return _Utils_chr(char.toUpperCase());
+}
+
+function _Char_toLower(char)
+{
+	return _Utils_chr(char.toLowerCase());
+}
+
+function _Char_toLocaleUpper(char)
+{
+	return _Utils_chr(char.toLocaleUpperCase());
+}
+
+function _Char_toLocaleLower(char)
+{
+	return _Utils_chr(char.toLocaleLowerCase());
+}
 
 
 
@@ -4390,40 +4390,18 @@ var elm$core$Set$toList = function (_n0) {
 	var dict = _n0.a;
 	return elm$core$Dict$keys(dict);
 };
-var author$project$Main$init = {content: _List_Nil, cued: ''};
-var elm$core$Basics$eq = _Utils_equal;
-var elm$core$Basics$add = _Basics_add;
-var elm$core$List$foldl = F3(
-	function (func, acc, list) {
-		foldl:
-		while (true) {
-			if (!list.b) {
-				return acc;
-			} else {
-				var x = list.a;
-				var xs = list.b;
-				var $temp$func = func,
-					$temp$acc = A2(func, x, acc),
-					$temp$list = xs;
-				func = $temp$func;
-				acc = $temp$acc;
-				list = $temp$list;
-				continue foldl;
-			}
-		}
-	});
-var elm$core$List$length = function (xs) {
-	return A3(
-		elm$core$List$foldl,
-		F2(
-			function (_n0, i) {
-				return i + 1;
-			}),
-		0,
-		xs);
+var author$project$Main$init = {content: _List_Nil, seq: 1000, staged: ''};
+var elm$core$Basics$False = {$: 'False'};
+var elm$core$Basics$True = {$: 'True'};
+var elm$core$List$isEmpty = function (xs) {
+	if (!xs.b) {
+		return true;
+	} else {
+		return false;
+	}
 };
 var author$project$Main$hasNoContent = function (model) {
-	return !elm$core$List$length(model.content);
+	return elm$core$List$isEmpty(model.content);
 };
 var elm$core$Basics$le = _Utils_le;
 var elm$core$Basics$sub = _Basics_sub;
@@ -4451,46 +4429,47 @@ var elm$core$List$drop = F2(
 var author$project$Main$removeLatest = function (model) {
 	return author$project$Main$hasNoContent(model) ? model.content : A2(elm$core$List$drop, 1, model.content);
 };
-var author$project$Main$updateCopy = function (model) {
-	return A2(elm$core$List$cons, model.cued, model.content);
-};
+var elm$core$Basics$add = _Basics_add;
 var author$project$Main$update = F2(
 	function (msg, model) {
 		switch (msg.$) {
-			case 'AddCued':
+			case 'AddStaged':
+				var newSeq = 1 + model.seq;
+				var newToDo = {txt: model.staged, value: newSeq};
+				var newContent = A2(elm$core$List$cons, newToDo, model.content);
 				return _Utils_update(
 					model,
-					{
-						content: author$project$Main$updateCopy(model),
-						cued: ''
-					});
-			case 'Cue':
-				var item = msg.a;
+					{content: newContent, seq: newSeq, staged: ''});
+			case 'StageInput':
+				var todoTxt = msg.a;
 				return _Utils_update(
 					model,
-					{cued: item});
+					{staged: todoTxt});
 			case 'RemoveNewest':
 				return _Utils_update(
 					model,
 					{
-						content: author$project$Main$removeLatest(model),
-						cued: ''
+						content: author$project$Main$removeLatest(model)
 					});
 			default:
 				return author$project$Main$init;
 		}
 	});
-var author$project$Main$AddCued = {$: 'AddCued'};
-var author$project$Main$Cue = function (a) {
-	return {$: 'Cue', a: a};
-};
+var author$project$Main$AddStaged = {$: 'AddStaged'};
 var author$project$Main$RemoveNewest = {$: 'RemoveNewest'};
 var author$project$Main$Reset = {$: 'Reset'};
+var author$project$Main$StageInput = function (a) {
+	return {$: 'StageInput', a: a};
+};
+var elm$core$Basics$append = _Utils_append;
+var elm$core$Maybe$Just = function (a) {
+	return {$: 'Just', a: a};
+};
+var elm$core$Maybe$Nothing = {$: 'Nothing'};
+var elm$core$String$fromInt = _String_fromNumber;
 var elm$core$Basics$identity = function (x) {
 	return x;
 };
-var elm$core$Basics$False = {$: 'False'};
-var elm$core$Basics$True = {$: 'True'};
 var elm$core$Result$isOk = function (result) {
 	if (result.$ === 'Ok') {
 		return true;
@@ -4521,6 +4500,25 @@ var elm$core$Array$SubTree = function (a) {
 	return {$: 'SubTree', a: a};
 };
 var elm$core$Elm$JsArray$initializeFromList = _JsArray_initializeFromList;
+var elm$core$List$foldl = F3(
+	function (func, acc, list) {
+		foldl:
+		while (true) {
+			if (!list.b) {
+				return acc;
+			} else {
+				var x = list.a;
+				var xs = list.b;
+				var $temp$func = func,
+					$temp$acc = A2(func, x, acc),
+					$temp$list = xs;
+				func = $temp$func;
+				acc = $temp$acc;
+				list = $temp$list;
+				continue foldl;
+			}
+		}
+	});
 var elm$core$List$reverse = function (list) {
 	return A3(elm$core$List$foldl, elm$core$List$cons, _List_Nil, list);
 };
@@ -4550,6 +4548,7 @@ var elm$core$Basics$apR = F2(
 	function (x, f) {
 		return f(x);
 	});
+var elm$core$Basics$eq = _Utils_equal;
 var elm$core$Tuple$first = function (_n0) {
 	var x = _n0.a;
 	return x;
@@ -4646,10 +4645,6 @@ var elm$core$Array$initialize = F2(
 			return A5(elm$core$Array$initializeHelp, fn, initialFromIndex, len, _List_Nil, tail);
 		}
 	});
-var elm$core$Maybe$Just = function (a) {
-	return {$: 'Just', a: a};
-};
-var elm$core$Maybe$Nothing = {$: 'Nothing'};
 var elm$core$Result$Err = function (a) {
 	return {$: 'Err', a: a};
 };
@@ -4672,7 +4667,6 @@ var elm$json$Json$Decode$OneOf = function (a) {
 	return {$: 'OneOf', a: a};
 };
 var elm$core$Basics$and = _Basics_and;
-var elm$core$Basics$append = _Utils_append;
 var elm$core$Basics$or = _Basics_or;
 var elm$core$Char$toCode = _Char_toCode;
 var elm$core$Char$isLower = function (_char) {
@@ -4692,6 +4686,16 @@ var elm$core$Char$isDigit = function (_char) {
 };
 var elm$core$Char$isAlphaNum = function (_char) {
 	return elm$core$Char$isLower(_char) || (elm$core$Char$isUpper(_char) || elm$core$Char$isDigit(_char));
+};
+var elm$core$List$length = function (xs) {
+	return A3(
+		elm$core$List$foldl,
+		F2(
+			function (_n0, i) {
+				return i + 1;
+			}),
+		0,
+		xs);
 };
 var elm$core$List$map2 = _List_map2;
 var elm$core$List$rangeHelp = F3(
@@ -4727,7 +4731,6 @@ var elm$core$List$indexedMap = F2(
 			xs);
 	});
 var elm$core$String$all = _String_all;
-var elm$core$String$fromInt = _String_fromNumber;
 var elm$core$String$join = F2(
 	function (sep, chunks) {
 		return A2(
@@ -4866,16 +4869,33 @@ var elm$virtual_dom$VirtualDom$toHandlerInt = function (handler) {
 			return 3;
 	}
 };
-var elm$html$Html$li = _VirtualDom_node('li');
+var elm$html$Html$option = _VirtualDom_node('option');
 var elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
 var elm$html$Html$text = elm$virtual_dom$VirtualDom$text;
-var author$project$Main$renderLine = function (item) {
+var elm$json$Json$Encode$string = _Json_wrap;
+var elm$html$Html$Attributes$stringProperty = F2(
+	function (key, string) {
+		return A2(
+			_VirtualDom_property,
+			key,
+			elm$json$Json$Encode$string(string));
+	});
+var elm$html$Html$Attributes$id = elm$html$Html$Attributes$stringProperty('id');
+var elm$html$Html$Attributes$value = elm$html$Html$Attributes$stringProperty('value');
+var author$project$Main$renderLine = function (todo) {
+	var todoValue = elm$core$String$fromInt(todo.value);
+	var todoPrefix = '#' + (todoValue + (' ' + todo.txt));
+	var idVal = 'td' + todoValue;
 	return A2(
-		elm$html$Html$li,
-		_List_Nil,
+		elm$html$Html$option,
 		_List_fromArray(
 			[
-				elm$html$Html$text(item)
+				elm$html$Html$Attributes$id(idVal),
+				elm$html$Html$Attributes$value(idVal)
+			]),
+		_List_fromArray(
+			[
+				elm$html$Html$text(todoPrefix)
 			]));
 };
 var elm$core$List$foldrHelper = F4(
@@ -4954,15 +4974,17 @@ var elm$html$Html$button = _VirtualDom_node('button');
 var elm$html$Html$div = _VirtualDom_node('div');
 var elm$html$Html$h1 = _VirtualDom_node('h1');
 var elm$html$Html$input = _VirtualDom_node('input');
-var elm$html$Html$ol = _VirtualDom_node('ol');
-var elm$json$Json$Encode$string = _Json_wrap;
-var elm$html$Html$Attributes$stringProperty = F2(
-	function (key, string) {
+var elm$html$Html$p = _VirtualDom_node('p');
+var elm$html$Html$select = _VirtualDom_node('select');
+var elm$json$Json$Encode$bool = _Json_wrap;
+var elm$html$Html$Attributes$boolProperty = F2(
+	function (key, bool) {
 		return A2(
 			_VirtualDom_property,
 			key,
-			elm$json$Json$Encode$string(string));
+			elm$json$Json$Encode$bool(bool));
 	});
+var elm$html$Html$Attributes$autofocus = elm$html$Html$Attributes$boolProperty('autofocus');
 var elm$html$Html$Attributes$class = elm$html$Html$Attributes$stringProperty('className');
 var elm$html$Html$Attributes$placeholder = elm$html$Html$Attributes$stringProperty('placeholder');
 var elm$html$Html$Attributes$size = function (n) {
@@ -4971,7 +4993,6 @@ var elm$html$Html$Attributes$size = function (n) {
 		'size',
 		elm$core$String$fromInt(n));
 };
-var elm$html$Html$Attributes$value = elm$html$Html$Attributes$stringProperty('value');
 var elm$virtual_dom$VirtualDom$Normal = function (a) {
 	return {$: 'Normal', a: a};
 };
@@ -5092,7 +5113,7 @@ var author$project$Main$view = function (model) {
 												elm$html$Html$button,
 												_List_fromArray(
 													[
-														elm$html$Html$Events$onClick(author$project$Main$AddCued),
+														elm$html$Html$Events$onClick(author$project$Main$AddStaged),
 														elm$html$Html$Attributes$class('btn btn-primary')
 													]),
 												_List_fromArray(
@@ -5146,9 +5167,10 @@ var author$project$Main$view = function (model) {
 											[
 												elm$html$Html$Attributes$class('new-todo'),
 												elm$html$Html$Attributes$size(40),
-												elm$html$Html$Attributes$value(model.cued),
-												elm$html$Html$Events$onInput(author$project$Main$Cue),
-												elm$html$Html$Attributes$placeholder('Todo Item')
+												elm$html$Html$Attributes$value(model.staged),
+												elm$html$Html$Events$onInput(author$project$Main$StageInput),
+												elm$html$Html$Attributes$placeholder('New todo item'),
+												elm$html$Html$Attributes$autofocus(true)
 											]),
 										_List_Nil)
 									]))
@@ -5170,9 +5192,38 @@ var author$project$Main$view = function (model) {
 								_List_fromArray(
 									[
 										A2(
-										elm$html$Html$ol,
-										_List_Nil,
+										elm$html$Html$select,
+										_List_fromArray(
+											[
+												elm$html$Html$Attributes$size(10)
+											]),
 										author$project$Main$renderContent(model.content))
+									]))
+							])),
+						A2(
+						elm$html$Html$div,
+						_List_fromArray(
+							[
+								elm$html$Html$Attributes$class('row')
+							]),
+						_List_fromArray(
+							[
+								A2(
+								elm$html$Html$div,
+								_List_fromArray(
+									[
+										elm$html$Html$Attributes$class('col-md-12')
+									]),
+								_List_fromArray(
+									[
+										A2(
+										elm$html$Html$p,
+										_List_Nil,
+										_List_fromArray(
+											[
+												elm$html$Html$text(
+												'current seq # = ' + elm$core$String$fromInt(model.seq))
+											]))
 									]))
 							]))
 					]))

@@ -5163,7 +5163,7 @@ var author$project$Main$view = function (model) {
 													]),
 												_List_fromArray(
 													[
-														elm$html$Html$text('Remove Selected')
+														elm$html$Html$text('Remove Selection')
 													])),
 												A2(
 												elm$html$Html$button,
@@ -5174,7 +5174,7 @@ var author$project$Main$view = function (model) {
 													]),
 												_List_fromArray(
 													[
-														elm$html$Html$text('Remove Topmost')
+														elm$html$Html$text('Remove Top')
 													])),
 												A2(
 												elm$html$Html$button,

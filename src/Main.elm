@@ -158,8 +158,8 @@ view model =
             div [class "col-md-12"] [
                 div [class "btn-group"] [
                     button [onClick AddStaged, class "btn btn-primary"] [text "Add"]
-                    , button [onClick RemoveSelected, class "btn btn-secondary"] [text "Remove Selected"]
-                    , button [onClick RemoveNewest, class "btn btn-secondary"] [text "Remove Topmost"]
+                    , button [onClick RemoveSelected, class "btn btn-secondary"] [text "Remove Selection"]
+                    , button [onClick RemoveNewest, class "btn btn-secondary"] [text "Remove Top"]
                     , button [onClick Reset,  class "btn btn-danger"] [text "Reset"]
                 ]
             ]

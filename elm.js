@@ -793,66 +793,6 @@ var _List_sortWith = F2(function(f, xs)
 
 
 
-// MATH
-
-var _Basics_add = F2(function(a, b) { return a + b; });
-var _Basics_sub = F2(function(a, b) { return a - b; });
-var _Basics_mul = F2(function(a, b) { return a * b; });
-var _Basics_fdiv = F2(function(a, b) { return a / b; });
-var _Basics_idiv = F2(function(a, b) { return (a / b) | 0; });
-var _Basics_pow = F2(Math.pow);
-
-var _Basics_remainderBy = F2(function(b, a) { return a % b; });
-
-// https://www.microsoft.com/en-us/research/wp-content/uploads/2016/02/divmodnote-letter.pdf
-var _Basics_modBy = F2(function(modulus, x)
-{
-	var answer = x % modulus;
-	return modulus === 0
-		? _Debug_crash(11)
-		:
-	((answer > 0 && modulus < 0) || (answer < 0 && modulus > 0))
-		? answer + modulus
-		: answer;
-});
-
-
-// TRIGONOMETRY
-
-var _Basics_pi = Math.PI;
-var _Basics_e = Math.E;
-var _Basics_cos = Math.cos;
-var _Basics_sin = Math.sin;
-var _Basics_tan = Math.tan;
-var _Basics_acos = Math.acos;
-var _Basics_asin = Math.asin;
-var _Basics_atan = Math.atan;
-var _Basics_atan2 = F2(Math.atan2);
-
-
-// MORE MATH
-
-function _Basics_toFloat(x) { return x; }
-function _Basics_truncate(n) { return n | 0; }
-function _Basics_isInfinite(n) { return n === Infinity || n === -Infinity; }
-
-var _Basics_ceiling = Math.ceil;
-var _Basics_floor = Math.floor;
-var _Basics_round = Math.round;
-var _Basics_sqrt = Math.sqrt;
-var _Basics_log = Math.log;
-var _Basics_isNaN = isNaN;
-
-
-// BOOLEANS
-
-function _Basics_not(bool) { return !bool; }
-var _Basics_and = F2(function(a, b) { return a && b; });
-var _Basics_or  = F2(function(a, b) { return a || b; });
-var _Basics_xor = F2(function(a, b) { return a !== b; });
-
-
-
 var _String_cons = F2(function(chr, str)
 {
 	return chr + str;
@@ -1162,6 +1102,66 @@ function _String_fromList(chars)
 	return _List_toArray(chars).join('');
 }
 
+
+
+
+// MATH
+
+var _Basics_add = F2(function(a, b) { return a + b; });
+var _Basics_sub = F2(function(a, b) { return a - b; });
+var _Basics_mul = F2(function(a, b) { return a * b; });
+var _Basics_fdiv = F2(function(a, b) { return a / b; });
+var _Basics_idiv = F2(function(a, b) { return (a / b) | 0; });
+var _Basics_pow = F2(Math.pow);
+
+var _Basics_remainderBy = F2(function(b, a) { return a % b; });
+
+// https://www.microsoft.com/en-us/research/wp-content/uploads/2016/02/divmodnote-letter.pdf
+var _Basics_modBy = F2(function(modulus, x)
+{
+	var answer = x % modulus;
+	return modulus === 0
+		? _Debug_crash(11)
+		:
+	((answer > 0 && modulus < 0) || (answer < 0 && modulus > 0))
+		? answer + modulus
+		: answer;
+});
+
+
+// TRIGONOMETRY
+
+var _Basics_pi = Math.PI;
+var _Basics_e = Math.E;
+var _Basics_cos = Math.cos;
+var _Basics_sin = Math.sin;
+var _Basics_tan = Math.tan;
+var _Basics_acos = Math.acos;
+var _Basics_asin = Math.asin;
+var _Basics_atan = Math.atan;
+var _Basics_atan2 = F2(Math.atan2);
+
+
+// MORE MATH
+
+function _Basics_toFloat(x) { return x; }
+function _Basics_truncate(n) { return n | 0; }
+function _Basics_isInfinite(n) { return n === Infinity || n === -Infinity; }
+
+var _Basics_ceiling = Math.ceil;
+var _Basics_floor = Math.floor;
+var _Basics_round = Math.round;
+var _Basics_sqrt = Math.sqrt;
+var _Basics_log = Math.log;
+var _Basics_isNaN = isNaN;
+
+
+// BOOLEANS
+
+function _Basics_not(bool) { return !bool; }
+var _Basics_and = F2(function(a, b) { return a && b; });
+var _Basics_or  = F2(function(a, b) { return a || b; });
+var _Basics_xor = F2(function(a, b) { return a !== b; });
 
 
 
@@ -4390,7 +4390,16 @@ var elm$core$Set$toList = function (_n0) {
 	var dict = _n0.a;
 	return elm$core$Dict$keys(dict);
 };
-var author$project$Main$init = {content: _List_Nil, seq: 1000, staged: ''};
+var author$project$Main$init = {content: _List_Nil, selected: '', seq: 100, staged: ''};
+var elm$core$Basics$append = _Utils_append;
+var elm$core$Maybe$Just = function (a) {
+	return {$: 'Just', a: a};
+};
+var elm$core$Maybe$Nothing = {$: 'Nothing'};
+var elm$core$String$fromInt = _String_fromNumber;
+var author$project$Main$generateKey = function (seq) {
+	return 'td' + elm$core$String$fromInt(seq);
+};
 var elm$core$Basics$False = {$: 'False'};
 var elm$core$Basics$True = {$: 'True'};
 var elm$core$List$isEmpty = function (xs) {
@@ -4429,13 +4438,113 @@ var elm$core$List$drop = F2(
 var author$project$Main$removeLatest = function (model) {
 	return author$project$Main$hasNoContent(model) ? model.content : A2(elm$core$List$drop, 1, model.content);
 };
+var elm$core$Basics$neq = _Utils_notEqual;
 var elm$core$Basics$add = _Basics_add;
+var elm$core$Basics$gt = _Utils_gt;
+var elm$core$List$foldl = F3(
+	function (func, acc, list) {
+		foldl:
+		while (true) {
+			if (!list.b) {
+				return acc;
+			} else {
+				var x = list.a;
+				var xs = list.b;
+				var $temp$func = func,
+					$temp$acc = A2(func, x, acc),
+					$temp$list = xs;
+				func = $temp$func;
+				acc = $temp$acc;
+				list = $temp$list;
+				continue foldl;
+			}
+		}
+	});
+var elm$core$List$reverse = function (list) {
+	return A3(elm$core$List$foldl, elm$core$List$cons, _List_Nil, list);
+};
+var elm$core$List$foldrHelper = F4(
+	function (fn, acc, ctr, ls) {
+		if (!ls.b) {
+			return acc;
+		} else {
+			var a = ls.a;
+			var r1 = ls.b;
+			if (!r1.b) {
+				return A2(fn, a, acc);
+			} else {
+				var b = r1.a;
+				var r2 = r1.b;
+				if (!r2.b) {
+					return A2(
+						fn,
+						a,
+						A2(fn, b, acc));
+				} else {
+					var c = r2.a;
+					var r3 = r2.b;
+					if (!r3.b) {
+						return A2(
+							fn,
+							a,
+							A2(
+								fn,
+								b,
+								A2(fn, c, acc)));
+					} else {
+						var d = r3.a;
+						var r4 = r3.b;
+						var res = (ctr > 500) ? A3(
+							elm$core$List$foldl,
+							fn,
+							acc,
+							elm$core$List$reverse(r4)) : A4(elm$core$List$foldrHelper, fn, acc, ctr + 1, r4);
+						return A2(
+							fn,
+							a,
+							A2(
+								fn,
+								b,
+								A2(
+									fn,
+									c,
+									A2(fn, d, res))));
+					}
+				}
+			}
+		}
+	});
+var elm$core$List$foldr = F3(
+	function (fn, acc, ls) {
+		return A4(elm$core$List$foldrHelper, fn, acc, 0, ls);
+	});
+var elm$core$List$filter = F2(
+	function (isGood, list) {
+		return A3(
+			elm$core$List$foldr,
+			F2(
+				function (x, xs) {
+					return isGood(x) ? A2(elm$core$List$cons, x, xs) : xs;
+				}),
+			_List_Nil,
+			list);
+	});
+var author$project$Main$removeSelected = function (model) {
+	var filterFunc = function (todo) {
+		return !_Utils_eq(todo.value, model.selected);
+	};
+	var culledList = A2(elm$core$List$filter, filterFunc, model.content);
+	return _Utils_update(
+		model,
+		{content: culledList, selected: ''});
+};
 var author$project$Main$update = F2(
 	function (msg, model) {
 		switch (msg.$) {
 			case 'AddStaged':
 				var newSeq = 1 + model.seq;
-				var newToDo = {txt: model.staged, value: newSeq};
+				var newKey = author$project$Main$generateKey(newSeq);
+				var newToDo = {txt: model.staged, value: newKey};
 				var newContent = A2(elm$core$List$cons, newToDo, model.content);
 				return _Utils_update(
 					model,
@@ -4451,22 +4560,27 @@ var author$project$Main$update = F2(
 					{
 						content: author$project$Main$removeLatest(model)
 					});
+			case 'CacheSelected':
+				var todoKey = msg.a;
+				return _Utils_update(
+					model,
+					{selected: todoKey});
+			case 'RemoveSelected':
+				return author$project$Main$removeSelected(model);
 			default:
 				return author$project$Main$init;
 		}
 	});
 var author$project$Main$AddStaged = {$: 'AddStaged'};
+var author$project$Main$CacheSelected = function (a) {
+	return {$: 'CacheSelected', a: a};
+};
 var author$project$Main$RemoveNewest = {$: 'RemoveNewest'};
+var author$project$Main$RemoveSelected = {$: 'RemoveSelected'};
 var author$project$Main$Reset = {$: 'Reset'};
 var author$project$Main$StageInput = function (a) {
 	return {$: 'StageInput', a: a};
 };
-var elm$core$Basics$append = _Utils_append;
-var elm$core$Maybe$Just = function (a) {
-	return {$: 'Just', a: a};
-};
-var elm$core$Maybe$Nothing = {$: 'Nothing'};
-var elm$core$String$fromInt = _String_fromNumber;
 var elm$core$Basics$identity = function (x) {
 	return x;
 };
@@ -4500,28 +4614,6 @@ var elm$core$Array$SubTree = function (a) {
 	return {$: 'SubTree', a: a};
 };
 var elm$core$Elm$JsArray$initializeFromList = _JsArray_initializeFromList;
-var elm$core$List$foldl = F3(
-	function (func, acc, list) {
-		foldl:
-		while (true) {
-			if (!list.b) {
-				return acc;
-			} else {
-				var x = list.a;
-				var xs = list.b;
-				var $temp$func = func,
-					$temp$acc = A2(func, x, acc),
-					$temp$list = xs;
-				func = $temp$func;
-				acc = $temp$acc;
-				list = $temp$list;
-				continue foldl;
-			}
-		}
-	});
-var elm$core$List$reverse = function (list) {
-	return A3(elm$core$List$foldl, elm$core$List$cons, _List_Nil, list);
-};
 var elm$core$Array$compressNodes = F2(
 	function (nodes, acc) {
 		compressNodes:
@@ -4574,7 +4666,6 @@ var elm$core$Basics$apL = F2(
 		return f(x);
 	});
 var elm$core$Basics$floor = _Basics_floor;
-var elm$core$Basics$gt = _Utils_gt;
 var elm$core$Basics$max = F2(
 	function (x, y) {
 		return (_Utils_cmp(x, y) > 0) ? x : y;
@@ -4883,9 +4974,8 @@ var elm$html$Html$Attributes$stringProperty = F2(
 var elm$html$Html$Attributes$id = elm$html$Html$Attributes$stringProperty('id');
 var elm$html$Html$Attributes$value = elm$html$Html$Attributes$stringProperty('value');
 var author$project$Main$renderLine = function (todo) {
-	var todoValue = elm$core$String$fromInt(todo.value);
-	var todoPrefix = '#' + (todoValue + (' ' + todo.txt));
-	var idVal = 'td' + todoValue;
+	var todoText = todo.value + (': ' + todo.txt);
+	var idVal = todo.value;
 	return A2(
 		elm$html$Html$option,
 		_List_fromArray(
@@ -4895,64 +4985,9 @@ var author$project$Main$renderLine = function (todo) {
 			]),
 		_List_fromArray(
 			[
-				elm$html$Html$text(todoPrefix)
+				elm$html$Html$text(todoText)
 			]));
 };
-var elm$core$List$foldrHelper = F4(
-	function (fn, acc, ctr, ls) {
-		if (!ls.b) {
-			return acc;
-		} else {
-			var a = ls.a;
-			var r1 = ls.b;
-			if (!r1.b) {
-				return A2(fn, a, acc);
-			} else {
-				var b = r1.a;
-				var r2 = r1.b;
-				if (!r2.b) {
-					return A2(
-						fn,
-						a,
-						A2(fn, b, acc));
-				} else {
-					var c = r2.a;
-					var r3 = r2.b;
-					if (!r3.b) {
-						return A2(
-							fn,
-							a,
-							A2(
-								fn,
-								b,
-								A2(fn, c, acc)));
-					} else {
-						var d = r3.a;
-						var r4 = r3.b;
-						var res = (ctr > 500) ? A3(
-							elm$core$List$foldl,
-							fn,
-							acc,
-							elm$core$List$reverse(r4)) : A4(elm$core$List$foldrHelper, fn, acc, ctr + 1, r4);
-						return A2(
-							fn,
-							a,
-							A2(
-								fn,
-								b,
-								A2(
-									fn,
-									c,
-									A2(fn, d, res))));
-					}
-				}
-			}
-		}
-	});
-var elm$core$List$foldr = F3(
-	function (fn, acc, ls) {
-		return A4(elm$core$List$foldrHelper, fn, acc, 0, ls);
-	});
 var elm$core$List$map = F2(
 	function (f, xs) {
 		return A3(
@@ -4974,7 +5009,6 @@ var elm$html$Html$button = _VirtualDom_node('button');
 var elm$html$Html$div = _VirtualDom_node('div');
 var elm$html$Html$h1 = _VirtualDom_node('h1');
 var elm$html$Html$input = _VirtualDom_node('input');
-var elm$html$Html$p = _VirtualDom_node('p');
 var elm$html$Html$select = _VirtualDom_node('select');
 var elm$json$Json$Encode$bool = _Json_wrap;
 var elm$html$Html$Attributes$boolProperty = F2(
@@ -5124,12 +5158,23 @@ var author$project$Main$view = function (model) {
 												elm$html$Html$button,
 												_List_fromArray(
 													[
+														elm$html$Html$Events$onClick(author$project$Main$RemoveSelected),
+														elm$html$Html$Attributes$class('btn btn-secondary')
+													]),
+												_List_fromArray(
+													[
+														elm$html$Html$text('Remove Selected')
+													])),
+												A2(
+												elm$html$Html$button,
+												_List_fromArray(
+													[
 														elm$html$Html$Events$onClick(author$project$Main$RemoveNewest),
 														elm$html$Html$Attributes$class('btn btn-secondary')
 													]),
 												_List_fromArray(
 													[
-														elm$html$Html$text('Undo')
+														elm$html$Html$text('Remove Topmost')
 													])),
 												A2(
 												elm$html$Html$button,
@@ -5165,10 +5210,10 @@ var author$project$Main$view = function (model) {
 										elm$html$Html$input,
 										_List_fromArray(
 											[
-												elm$html$Html$Attributes$class('new-todo'),
-												elm$html$Html$Attributes$size(40),
-												elm$html$Html$Attributes$value(model.staged),
 												elm$html$Html$Events$onInput(author$project$Main$StageInput),
+												elm$html$Html$Attributes$class('new-todo'),
+												elm$html$Html$Attributes$size(100),
+												elm$html$Html$Attributes$value(model.staged),
 												elm$html$Html$Attributes$placeholder('New todo item'),
 												elm$html$Html$Attributes$autofocus(true)
 											]),
@@ -5195,35 +5240,10 @@ var author$project$Main$view = function (model) {
 										elm$html$Html$select,
 										_List_fromArray(
 											[
-												elm$html$Html$Attributes$size(10)
+												elm$html$Html$Attributes$size(15),
+												elm$html$Html$Events$onInput(author$project$Main$CacheSelected)
 											]),
 										author$project$Main$renderContent(model.content))
-									]))
-							])),
-						A2(
-						elm$html$Html$div,
-						_List_fromArray(
-							[
-								elm$html$Html$Attributes$class('row')
-							]),
-						_List_fromArray(
-							[
-								A2(
-								elm$html$Html$div,
-								_List_fromArray(
-									[
-										elm$html$Html$Attributes$class('col-md-12')
-									]),
-								_List_fromArray(
-									[
-										A2(
-										elm$html$Html$p,
-										_List_Nil,
-										_List_fromArray(
-											[
-												elm$html$Html$text(
-												'current seq # = ' + elm$core$String$fromInt(model.seq))
-											]))
 									]))
 							]))
 					]))

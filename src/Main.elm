@@ -23,8 +23,8 @@ SOFTWARE.
 module Main exposing (main)
 
 import Browser
-import Html exposing (Html, Attribute, div, input, text, button, h1, select, option, p)
-import Html.Attributes exposing (id, value, placeholder, class, size, selected, autofocus)
+import Html exposing (Html, Attribute, div, input, text, button, h1, select, option)
+import Html.Attributes exposing (id, value, placeholder, class, size, autofocus)
 import Html.Events exposing (onClick, onInput)
 
 -- MAIN
@@ -41,10 +41,13 @@ type alias Seq = Int
 
 type alias TodoText = String
 
-type alias Todo = {value: Seq, txt: TodoText}
+type alias TodoKey = String
+
+type alias Todo = {value: TodoKey, txt: TodoText}
 
 type alias Model =
   { content : Content
+  , selected : TodoKey
   , staged : TodoText
   , seq : Seq
   }
@@ -53,8 +56,9 @@ type alias Model =
 init : Model
 init =
     { content = []
+    , selected = ""
     , staged = ""
-    , seq = 1000
+    , seq = 100
     }
 
 
@@ -62,10 +66,11 @@ init =
 
 type Msg
     = AddStaged
-    | StageInput TodoText
-    | Reset
+    | CacheSelected TodoKey
     | RemoveNewest
---    | RemoveSelected
+    | RemoveSelected
+    | Reset
+    | StageInput TodoText
 
 
 update : Msg -> Model -> Model
@@ -76,7 +81,8 @@ update msg model =
         AddStaged ->
             let
                 newSeq = (+) 1 model.seq
-                newToDo = {value = newSeq, txt = model.staged}
+                newKey = generateKey newSeq
+                newToDo = {value = newKey, txt = model.staged}
                 newContent = (::) newToDo model.content
             in
             {model |  seq = newSeq, content = newContent, staged = ""}
@@ -87,8 +93,11 @@ update msg model =
         RemoveNewest ->
             {model | content = removeLatest model}
 
---        RemoveSelected ->
---            {model | content = removeSelected model, cued = emptyTodo}
+        CacheSelected todoKey ->
+            {model | selected = todoKey}
+
+        RemoveSelected ->
+            removeSelected model
 
         Reset ->
             init
@@ -108,16 +117,24 @@ removeLatest model =
             List.drop 1 model.content
 
 
+removeSelected : Model -> Model
+removeSelected  model =
+    let
+        filterFunc = \todo -> todo.value /= model.selected
+        culledList = List.filter filterFunc model.content
+    in
+    {model | content = culledList, selected = ""}
+
+
 ---- VIEW
 
 renderLine : Todo -> (Html msg)
 renderLine todo =
     let
-        todoValue = String.fromInt todo.value
-        idVal = "td" ++ todoValue
-        todoPrefix = "#" ++ todoValue ++ " " ++ todo.txt
+        idVal = todo.value
+        todoText = todo.value ++ ": " ++ todo.txt
     in
-    option [id idVal, value idVal] [text todoPrefix]
+    option [id idVal, value idVal] [text todoText]
 
 
 renderContent : Content -> List (Html msg)
@@ -141,7 +158,8 @@ view model =
             div [class "col-md-12"] [
                 div [class "btn-group"] [
                     button [onClick AddStaged, class "btn btn-primary"] [text "Add"]
-                    , button [onClick RemoveNewest, class "btn btn-secondary"] [text "Undo"]
+                    , button [onClick RemoveSelected, class "btn btn-secondary"] [text "Remove Selected"]
+                    , button [onClick RemoveNewest, class "btn btn-secondary"] [text "Remove Topmost"]
                     , button [onClick Reset,  class "btn btn-danger"] [text "Reset"]
                 ]
             ]
@@ -149,24 +167,26 @@ view model =
 
         ,div [class "row"] [
             div [class "col-md-12"] [
-                input [class "new-todo", size 40, value model.staged, onInput StageInput,
+                input [ onInput StageInput, class "new-todo", size 100, value model.staged,
                     placeholder "New todo item", autofocus True] []
             ]
         ]
 
         ,div [class "row"] [
             div [class "col-md-12"] [
-                select [size 10] (renderContent model.content)
+                select [size 15, onInput CacheSelected] (renderContent model.content)
             ]
         ]
 
-        ,div [class "row"] [
-            div [class "col-md-12"] [
-                p [] [text ("current seq # = " ++  (String.fromInt model.seq))  ]
-            ]
-        ]
     ]
 
   ]
+
+
+-- UTILITY
+
+generateKey : Seq -> TodoKey
+generateKey seq =
+    "td" ++ String.fromInt seq
 
 

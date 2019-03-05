@@ -7,12 +7,12 @@ of a beginning dip into Elm coding, it has no persistent state.
 
 There is no styling in this initial rendition. It illustrates
 the Elm model-update-view cycle implemented as Elm pure functions.  
-The screen channels Web-1999, squeezed into the upper left corner. 
+
 
 ![Raw todo image](doc/raw-todos.png)
 
-A screenshot of the the app after re-arranging the controls and adding 
-layout and style:
+A screenshot of the the app after turning on 
+layout and style via index.html links to Bootstrap 4 CSS and local styles
 
 ![Styled todo image](doc/Elm-todo-styled.png)
 

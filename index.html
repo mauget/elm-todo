@@ -20,10 +20,10 @@
 
     const app = Elm.Main.init({
         node: document.getElementById('app'),
-        flags: cache
+        flags: cache || []
     });
 
-    app.ports.cache.subscribe(data => {
+    app.ports.cache.subscribe(function(data) {
         localStorage.setItem(storeName, JSON.stringify(data));
     });
 

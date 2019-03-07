@@ -24,7 +24,7 @@ port module Main exposing (main)
 
 import Browser
 import Html exposing (Html, Attribute, div, input, text, button, h1, select, option)
-import Html.Attributes exposing (id, value, placeholder, class, size, autofocus, disabled)
+import Html.Attributes exposing (id, value, placeholder, class, size, autofocus, disabled, selected)
 import Html.Events exposing (onClick, onInput)
 
 -- MAIN
@@ -187,7 +187,7 @@ renderLine todo =
         idVal = todo.value
         todoText = todo.value ++ ": " ++ todo.txt
     in
-    option [id idVal, value idVal] [text todoText]
+    option [id idVal, value idVal, selected False] [text todoText]
 
 
 renderContent : Content -> List (Html msg)

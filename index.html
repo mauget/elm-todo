@@ -23,7 +23,18 @@
 
 <script src="elm.js"></script>
 <script>
-    Elm.Main.init({node: document.getElementById("app")});
+    const storeName = 'cache';
+    const cache = JSON.parse(localStorage.getItem(storeName));
+
+    const app = Elm.Main.init({
+        node: document.getElementById('app'),
+        flags: cache
+    });
+
+    app.ports.cache.subscribe(data => {
+        localStorage.setItem(storeName, JSON.stringify(data));
+    });
+
 </script>
 </body>
 </html>

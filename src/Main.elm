@@ -20,17 +20,31 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 -}
 
-module Main exposing (main)
+port module Main exposing (main)
 
 import Browser
 import Html exposing (Html, Attribute, div, input, text, button, h1, select, option)
-import Html.Attributes exposing (id, value, placeholder, class, size, autofocus)
+import Html.Attributes exposing (id, value, placeholder, class, size, autofocus, disabled)
 import Html.Events exposing (onClick, onInput)
 
 -- MAIN
 
+-- {* Signature of the Browser.element *}
+-- element :
+--    { init : flags -> ( model, Cmd msg )
+--    , update : msg -> model -> ( model, Cmd msg )
+--    , subscriptions : model -> Subs msg
+--    , view : model -> Html msg
+--    }
+--    -> Program flags model msg
+
 main =
-  Browser.sandbox { init = init , update = update , view = view }
+  Browser.element
+    { init = init
+    , update = update
+    , subscriptions = subscriptions
+    , view = view
+    }
 
 
 -- MODEL
@@ -53,27 +67,45 @@ type alias Model =
   }
 
 
-init : Model
-init =
-    { content = []
+port cache : Content -> Cmd msg
+
+-- INIT
+
+init : Content  -> (Model, Cmd Msg)
+init newContent =
+    (initialModel newContent
+    , Cmd.none
+    )
+
+
+initialModel : Content -> Model
+initialModel newContent =
+    { content = newContent
     , selected = ""
     , staged = ""
     , seq = 100
     }
 
 
+-- SUBSCRIPTIONS
+
+subscriptions : Model -> Sub Msg
+subscriptions _ =
+  Sub.none
+
+
 ---- UPDATE
 
 type Msg
     = AddStaged
-    | CacheSelected TodoKey
+    | HoldSelected TodoKey
     | RemoveNewest
     | RemoveSelected
     | Reset
     | StageInput TodoText
 
 
-update : Msg -> Model -> Model
+update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
 
     case msg of
@@ -85,22 +117,44 @@ update msg model =
                 newToDo = {value = newKey, txt = model.staged}
                 newContent = (::) newToDo model.content
             in
-            {model |  seq = newSeq, content = newContent, staged = ""}
+            ({model |  seq = newSeq, content = newContent, staged = "", selected = ""}
+            , cache newContent
+            )
 
         StageInput todoTxt ->
-            {model | staged = todoTxt}
+            ({model | staged = todoTxt}
+            , Cmd.none
+            )
 
         RemoveNewest ->
-            {model | content = removeLatest model}
+            let
+                newContent = removeLatest model
+            in ({model | content = newContent,  staged = "", selected = ""}
+            , cache newContent
+            )
 
-        CacheSelected todoKey ->
-            {model | selected = todoKey}
+        HoldSelected todoKey ->
+            ({model | selected = todoKey}
+            , Cmd.none
+            )
 
         RemoveSelected ->
-            removeSelected model
+            let
+                newContent = removeSelected model
+            in ({model | content = newContent, staged = "", selected = ""}
+            , cache newContent
+            )
 
         Reset ->
-            init
+            let
+                newContent = []
+            in
+            (initialModel newContent, cache newContent)
+
+
+generateKey : Seq -> TodoKey
+generateKey seq =
+    "td" ++ String.fromInt seq
 
 
 hasNoContent : Model -> Bool
@@ -117,13 +171,12 @@ removeLatest model =
             List.drop 1 model.content
 
 
-removeSelected : Model -> Model
+removeSelected : Model -> Content
 removeSelected  model =
     let
         filterFunc = \todo -> todo.value /= model.selected
-        culledList = List.filter filterFunc model.content
     in
-    {model | content = culledList, selected = ""}
+    List.filter filterFunc model.content
 
 
 ---- VIEW
@@ -157,9 +210,9 @@ view model =
         ,div [class "row"] [
             div [class "col-md-12"] [
                 div [class "btn-group"] [
-                    button [onClick AddStaged, class "btn btn-primary"] [text "Add"]
-                    , button [onClick RemoveSelected, class "btn btn-secondary"] [text "Remove Selection"]
-                    , button [onClick RemoveNewest, class "btn btn-secondary"] [text "Remove Top"]
+                    button [onClick AddStaged, class "btn btn-primary", disabled (String.isEmpty model.staged) ] [text "Add"]
+                    , button [onClick RemoveSelected, class "btn btn-secondary", disabled (String.isEmpty model.selected)] [text "Remove Selection"]
+                    , button [onClick RemoveNewest, class "btn btn-secondary", disabled (List.isEmpty model.content)] [text "Remove Top"]
                     , button [onClick Reset,  class "btn btn-danger"] [text "Reset"]
                 ]
             ]
@@ -174,19 +227,11 @@ view model =
 
         ,div [class "row"] [
             div [class "col-md-12"] [
-                select [size 15, onInput CacheSelected] (renderContent model.content)
+                select [size 15, onInput HoldSelected] (renderContent model.content)
             ]
         ]
 
     ]
 
   ]
-
-
--- UTILITY
-
-generateKey : Seq -> TodoKey
-generateKey seq =
-    "td" ++ String.fromInt seq
-
 

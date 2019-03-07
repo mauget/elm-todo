@@ -4,11 +4,6 @@ body {
     color: white;
 }
 
-img {
-    border: 1px solid white;
-    margin: 5px;
-}
-
 h1 {
     color: #eeeeee;
 }
@@ -33,6 +28,3 @@ select {
     margin-bottom: 0.2rem;
 }
 
-button {
-    margin: 0.5rem
-}

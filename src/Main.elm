@@ -181,7 +181,7 @@ removeSelected  model =
     List.filter filterFunc model.content
 
 
--- Elm has no onChange. Edge and IE11 have no onInput for select atatements.
+-- Elm doesn't provide onChange, while Edge and IE11 have no onInput for select atatements.
 -- Hence, we RYO onChange:
 -- Ref https://thoughtbot.com/blog/building-custom-dom-event-handlers-in-elm
 onChange : (String -> msg) -> Html.Attribute msg

@@ -25,7 +25,8 @@ port module Main exposing (main)
 import Browser
 import Html exposing (Html, Attribute, div, input, text, button, h1, select, option)
 import Html.Attributes exposing (id, value, placeholder, class, size, autofocus, disabled, selected)
-import Html.Events exposing (onClick, onInput)
+import Html.Events exposing (onClick, onInput, on)
+import Json.Decode
 
 -- MAIN
 
@@ -103,6 +104,7 @@ type Msg
     | RemoveSelected
     | Reset
     | StageInput TodoText
+--    | TodoSelected TodoKey
 
 
 update : Msg -> Model -> (Model, Cmd Msg)
@@ -122,7 +124,7 @@ update msg model =
             )
 
         StageInput todoTxt ->
-            ({model | staged = todoTxt}
+            ({model | staged = todoTxt, selected = ""}
             , Cmd.none
             )
 
@@ -179,6 +181,14 @@ removeSelected  model =
     List.filter filterFunc model.content
 
 
+-- Elm has no onChange. Edge and IE11 have no onInput for select atatements.
+-- Hence, we RYO onChange:
+-- Ref https://thoughtbot.com/blog/building-custom-dom-event-handlers-in-elm
+onChange : (String -> msg) -> Html.Attribute msg
+onChange tagger =
+  on "change" (Json.Decode.map tagger Html.Events.targetValue)
+
+
 ---- VIEW
 
 renderLine : Todo -> (Html msg)
@@ -227,7 +237,7 @@ view model =
 
         ,div [class "row"] [
             div [class "col-md-12"] [
-                select [size 15, onInput HoldSelected] (renderContent model.content)
+                select [size 15, onChange HoldSelected] (renderContent model.content)
             ]
         ]
 

@@ -4966,7 +4966,7 @@ var author$project$Main$update = F2(
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
-						{staged: todoTxt}),
+						{selected: '', staged: todoTxt}),
 					elm$core$Platform$Cmd$none);
 			case 'RemoveNewest':
 				var newContent = author$project$Main$removeLatest(model);
@@ -5006,6 +5006,9 @@ var author$project$Main$Reset = {$: 'Reset'};
 var author$project$Main$StageInput = function (a) {
 	return {$: 'StageInput', a: a};
 };
+var elm$virtual_dom$VirtualDom$Normal = function (a) {
+	return {$: 'Normal', a: a};
+};
 var elm$core$Basics$identity = function (x) {
 	return x;
 };
@@ -5023,6 +5026,31 @@ var elm$virtual_dom$VirtualDom$toHandlerInt = function (handler) {
 		default:
 			return 3;
 	}
+};
+var elm$virtual_dom$VirtualDom$on = _VirtualDom_on;
+var elm$html$Html$Events$on = F2(
+	function (event, decoder) {
+		return A2(
+			elm$virtual_dom$VirtualDom$on,
+			event,
+			elm$virtual_dom$VirtualDom$Normal(decoder));
+	});
+var elm$json$Json$Decode$field = _Json_decodeField;
+var elm$json$Json$Decode$at = F2(
+	function (fields, decoder) {
+		return A3(elm$core$List$foldr, elm$json$Json$Decode$field, decoder, fields);
+	});
+var elm$json$Json$Decode$string = _Json_decodeString;
+var elm$html$Html$Events$targetValue = A2(
+	elm$json$Json$Decode$at,
+	_List_fromArray(
+		['target', 'value']),
+	elm$json$Json$Decode$string);
+var author$project$Main$onChange = function (tagger) {
+	return A2(
+		elm$html$Html$Events$on,
+		'change',
+		A2(elm$json$Json$Decode$map, tagger, elm$html$Html$Events$targetValue));
 };
 var elm$html$Html$option = _VirtualDom_node('option');
 var elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
@@ -5096,17 +5124,6 @@ var elm$html$Html$Attributes$size = function (n) {
 		'size',
 		elm$core$String$fromInt(n));
 };
-var elm$virtual_dom$VirtualDom$Normal = function (a) {
-	return {$: 'Normal', a: a};
-};
-var elm$virtual_dom$VirtualDom$on = _VirtualDom_on;
-var elm$html$Html$Events$on = F2(
-	function (event, decoder) {
-		return A2(
-			elm$virtual_dom$VirtualDom$on,
-			event,
-			elm$virtual_dom$VirtualDom$Normal(decoder));
-	});
 var elm$html$Html$Events$onClick = function (msg) {
 	return A2(
 		elm$html$Html$Events$on,
@@ -5126,17 +5143,6 @@ var elm$html$Html$Events$stopPropagationOn = F2(
 			event,
 			elm$virtual_dom$VirtualDom$MayStopPropagation(decoder));
 	});
-var elm$json$Json$Decode$field = _Json_decodeField;
-var elm$json$Json$Decode$at = F2(
-	function (fields, decoder) {
-		return A3(elm$core$List$foldr, elm$json$Json$Decode$field, decoder, fields);
-	});
-var elm$json$Json$Decode$string = _Json_decodeString;
-var elm$html$Html$Events$targetValue = A2(
-	elm$json$Json$Decode$at,
-	_List_fromArray(
-		['target', 'value']),
-	elm$json$Json$Decode$string);
 var elm$html$Html$Events$onInput = function (tagger) {
 	return A2(
 		elm$html$Html$Events$stopPropagationOn,
@@ -5316,7 +5322,7 @@ var author$project$Main$view = function (model) {
 										_List_fromArray(
 											[
 												elm$html$Html$Attributes$size(15),
-												elm$html$Html$Events$onInput(author$project$Main$HoldSelected)
+												author$project$Main$onChange(author$project$Main$HoldSelected)
 											]),
 										author$project$Main$renderContent(model.content))
 									]))

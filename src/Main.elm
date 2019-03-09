@@ -180,8 +180,8 @@ removeSelected  model =
     List.filter filterFunc model.content
 
 
--- Elm doesn't provide onChange, yet Edge and IE11 have no onInput support for a <select>. :-(
--- We have to code a custom onChange:
+-- Elm doesn't provide onChange! Yet Edge and IE11 have no onInput support for a <select>. :-(
+-- To manage <select> we code a custom onChange:
 -- Ref https://github.com/elm-lang/html/blob/2.0.0/src/Html/Events.elm
 -- Base onChange on the Elm.events  onInput defined like this:
 {-

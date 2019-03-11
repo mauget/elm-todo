@@ -72,6 +72,8 @@ port cache : Maybe Model -> Cmd msg
 
 -- INIT
 
+-- If Javascript flag (newModel) is null (Nothing), create model from canned empty model.
+-- Otherwise create model from flag (newMode)
 init : Maybe Model  -> (Model, Cmd Msg)
 init newModel  =
     ( Maybe.withDefault emptyModel newModel
@@ -79,6 +81,7 @@ init newModel  =
     )
 
 
+-- This is a starter model.
 emptyModel : Model
 emptyModel =
     { content = []
@@ -90,6 +93,7 @@ emptyModel =
 
 -- SUBSCRIPTIONS
 
+-- Not using a subscripition. Our sole input from JS is via a flag.
 subscriptions : Model -> Sub Msg
 subscriptions _ =
   Sub.none

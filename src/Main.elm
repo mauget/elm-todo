@@ -68,20 +68,20 @@ type alias Model =
   }
 
 
-port cache : Content -> Cmd msg
+port cache : Maybe Model -> Cmd msg
 
 -- INIT
 
-init : Content  -> (Model, Cmd Msg)
-init newContent =
-    (initialModel newContent
+init : Maybe Model  -> (Model, Cmd Msg)
+init newModel  =
+    ( Maybe.withDefault emptyModel newModel
     , Cmd.none
     )
 
 
-initialModel : Content -> Model
-initialModel newContent =
-    { content = newContent
+emptyModel : Model
+emptyModel =
+    { content = []
     , selected = ""
     , staged = ""
     , seq = 100
@@ -117,9 +117,10 @@ update msg model =
                 newKey = generateKey newSeq
                 newToDo = {value = newKey, txt = model.staged}
                 newContent = (::) newToDo model.content
+                newModel = {model |  seq = newSeq, content = newContent, staged = "", selected = ""}
             in
-            ({model |  seq = newSeq, content = newContent, staged = "", selected = ""}
-            , cache newContent
+            ( newModel
+            , cache (Just newModel)
             )
 
         StageInput todoTxt ->
@@ -130,8 +131,10 @@ update msg model =
         RemoveNewest ->
             let
                 newContent = removeLatest model
-            in ({model | content = newContent,  staged = "", selected = ""}
-            , cache newContent
+                newModel = {model | content = newContent,  staged = "", selected = ""}
+            in
+            ( newModel
+            , cache (Just newModel)
             )
 
         HoldSelected todoKey ->
@@ -142,15 +145,22 @@ update msg model =
         RemoveSelected ->
             let
                 newContent = removeSelected model
-            in ({model | content = newContent, staged = "", selected = ""}
-            , cache newContent
+                newModel = {model | content = newContent, staged = "", selected = ""}
+            in
+            ( newModel
+            , cache (Just newModel)
             )
 
         Reset ->
             let
-                newContent = []
+                newModel =
+                    Maybe.withDefault
+                        ( emptyModel)
+                        (Just {content = [], staged = "", selected = "", seq = model.seq} )
             in
-            (initialModel newContent, cache newContent)
+            ( newModel
+            , cache (Just newModel )
+            )
 
 
 generateKey : Seq -> TodoKey

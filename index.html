@@ -24,7 +24,7 @@
 
     const app = Elm.Main.init({
         node: document.getElementById('app'),
-        flags: cache || []
+        flags: cache
     });
 
     app.ports.cache.subscribe(function(data) {

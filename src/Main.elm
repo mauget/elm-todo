@@ -93,7 +93,7 @@ emptyModel =
 
 -- SUBSCRIPTIONS
 
--- Not using a subscripition. Our sole input from JS is via a flag.
+-- Not using a subscription. Our sole input from JS is via a flag.
 subscriptions : Model -> Sub Msg
 subscriptions _ =
   Sub.none

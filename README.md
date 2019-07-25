@@ -22,7 +22,7 @@ Local storage, as used here, is simplistic **demo** persistance. It caches the
 vendor browser-URL. 
 + Distinct tabs or windows of a given browser-url combination replace the single list at each UI event. 
 
-Realistic multi-client data persistence could implemented via Elm http. 
+Realistic multi-client data persistence could be implemented via Elm http. 
 See [An Introduction to Elm - HTTP](https://guide.elm-lang.org/effects/http.html).
 
 ## Development Environment 

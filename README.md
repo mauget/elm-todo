@@ -3,10 +3,11 @@ This is a simple self-contained TODO list implemented in Elm. It uses simple
 demo persistance via html 5 localstorage `saveItem` and `loadItem` 
 
 ## Try
-Carry out:
-1. `npm install -g http-server`
-1. `http-server`
-1. `http://locahost:8080`  
+Carry out the following steps:
+1. Ensure that Elm infrastructure is installed: [https://guide.elm-lang.org/install.html](https://guide.elm-lang.org/install.html)
+1. Clone the repo from [https://github.com/mauget/elm-todo.git](https://github.com/mauget/elm-todo.git)
+1. Compile Main.elm to elm.js using a command from the project root: `elm make src/Main.elm --output=elm.js`
+1. Open [./index.html](./index.html) in a browser; no server needed for this application 
 
 We added layout and style to the UI via index.html links to 
 Bootstrap 4 CSS and local styles. A screenshot of the app follows. 
